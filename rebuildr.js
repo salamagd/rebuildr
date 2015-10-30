@@ -1,13 +1,15 @@
-console.log('Rebuildr extension loaded!');
-
 function watchForFailedBuild() {
-  if (document.querySelectorAll('#build .build-state-started .build-pipeline-state-failed.build-pipeline-job-script').length > 0) {
-    console.log('Build failure detected!');
-    buttonToMash = document.querySelector('.build-cancel-button, .build-rebuild-button');
-    if (buttonToMash) {
-      buttonToMash.click();
-    }
+  if (document.querySelector('.build-state-started .build-pipeline-state-failed.build-pipeline-job-script')) {
+    clearInterval(window.rebuildrInterval);
+    console.log('Build failure detected in running build!');
+    document.querySelector('.build-cancel-button').click();
+    setTimeout(function() {
+      document.querySelector('.build-rebuild-button').click();
+    }, 2000);
   }
 }
 
-setInterval(watchForFailedBuild, 1000);
+if (document.querySelector('#build')) {
+  console.log('Rebuildr extension loaded - build detected');
+  window.rebuildrInterval = setInterval(watchForFailedBuild, 1000);
+}
